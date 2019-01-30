@@ -1,0 +1,75 @@
+##tic-tac-toe
+import sys
+def makeMove(piece):
+    #check input
+    print('Enter the move for ' + piece)
+    userInput = input()
+    
+    while acceptedMoves.count(userInput) == 0: 
+        print('Please enter a valid move for ' + piece)
+        userInput = input()
+    
+    #make move
+    userMove = acceptedMoves.pop(acceptedMoves.index(userInput))
+    gameBoard[userMove] = piece
+    #print(gameBoard)
+    #print(acceptedMoves)
+    if piece == 'x':
+        xMoves.append(userMove)
+        checkWin(xMoves, piece)
+    else:
+        oMoves.append(userMove)
+        checkWin(oMoves, piece)
+
+def checkWin(currentMoves, piece): 
+    #smallList = [4]
+    #bigList = [2, 3, 5]
+    #print(all(elem in bigList for elem in smallList))
+    #win combinations 
+    winList = []
+    winList.append(['top_l', 'mid_l', 'bot_l']) #leftWin
+    winList.append(['top_m', 'mid_m', 'bot_m']) #middle verticle win 
+    winList.append(['top_r', 'mid_r', 'bot_r']) #rightWin
+    winList.append(['top_l', 'top_m', 'top_r'])#top win
+    winList.append(['mid_l', 'mid_m', 'mid_r'])#middle horizontal win
+    winList.append(['bot_l', 'bot_m', 'bot_r'])#bottom win 
+    winList.append(['bot_l', 'mid_m', 'top_r']) #ascending diagional win
+    winList.append(['top_l', 'mid_m', 'bot_r']) #descending diagional win
+    
+    if (len(currentMoves) > 2):
+        for winOption in winList:
+            if(all(elem in currentMoves for elem in winOption)):
+                #hasWon = true
+                print(piece + ' has won. Goodbye')
+                sys.exit(0)
+    
+    
+def main():
+    global gameBoard 
+    gameBoard = {'top_l': ' ', 'top_m': ' ', 'top_r': ' ',
+        'mid_l': ' ', 'mid_m': ' ', 'mid_r': ' ',
+        'bot_l': ' ', 'bot_m':' ', 'bot_r': ' '}
+    global acceptedMoves 
+    acceptedMoves = list(gameBoard.keys())
+    global xMoves
+    global oMoves
+    xMoves = []
+    oMoves = []
+
+    totMoveCnt = 0 
+    xMoveCnt = 0
+    oMoveCnt = 0 
+    
+    while totMoveCnt <=9: 
+        if totMoveCnt % 2 == 0: 
+            makeMove('x')
+        else:
+            makeMove('o')
+            
+        totMoveCnt += 1
+main()
+
+
+#check if one list is in another list. 
+
+    
