@@ -1,20 +1,40 @@
 ##tic-tac-toe
 import sys
+def getValue(key): #gets value for the key to be displayed, if the value is empty in the dictionary, the key name will be displayed
+    return key if gameBoard.get(key) == ' ' else gameBoard.get(key) 
+
+def displayCurrentBoard():
+    #print('Accepted moves are ')
+    #print(acceptedMoves)
+    #print(gameBoard.get('top_l','top_l') + ' | ' + gameBoard.get('top_m','top_m') + ' | ' + gameBoard.get('top_r','top_r'))
+    #print('---------')
+    #print(gameBoard.get('mid_l','mid_l') + ' | ' + gameBoard.get('mid_m','mid') + ' | ' + gameBoard.get('mid_r','mid_r'))
+    #print('---------')
+    #print(gameBoard.get('bot_l','bot_l') + ' | ' + gameBoard.get('bot_m','bot_m') + ' | ' + gameBoard.get('bot_r','bot_r'))
+    print() 
+    print(getValue('top_l') + ' | ' + getValue('top_m') + ' | ' + getValue('top_r'))
+    print('----------------')
+    print(getValue('mid_l') + ' | ' + getValue('mid_m') + ' | ' + getValue('mid_r'))
+    print('----------------')
+    print(getValue('bot_l') + ' | ' + getValue('bot_m') + ' | ' + getValue('bot_r'))
+    print()
+    
 def makeMove(piece):
+    displayCurrentBoard()
     #check input
-    print('Enter the move for ' + piece)
+    print('Enter the move for \'' + piece + ('\''))
     userInput = input()
     
     while acceptedMoves.count(userInput) == 0: 
-        print('Please enter a valid move for ' + piece)
+        print('Please enter a valid move for \'' + piece + ('\''))
         userInput = input()
     
     #make move
     userMove = acceptedMoves.pop(acceptedMoves.index(userInput))
     gameBoard[userMove] = piece
     #print(gameBoard)
-    #print(acceptedMoves)
-    if piece == 'x':
+
+    if piece == 'X':
         xMoves.append(userMove)
         checkWin(xMoves, piece)
     else:
@@ -22,10 +42,6 @@ def makeMove(piece):
         checkWin(oMoves, piece)
 
 def checkWin(currentMoves, piece): 
-    #smallList = [4]
-    #bigList = [2, 3, 5]
-    #print(all(elem in bigList for elem in smallList))
-    #win combinations 
     winList = []
     winList.append(['top_l', 'mid_l', 'bot_l']) #leftWin
     winList.append(['top_m', 'mid_m', 'bot_m']) #middle verticle win 
@@ -40,9 +56,9 @@ def checkWin(currentMoves, piece):
         for winOption in winList:
             if(all(elem in currentMoves for elem in winOption)):
                 #hasWon = true
+                displayCurrentBoard()
                 print(piece + ' has won. Goodbye')
                 sys.exit(0)
-    
     
 def main():
     global gameBoard 
@@ -51,20 +67,24 @@ def main():
         'bot_l': ' ', 'bot_m':' ', 'bot_r': ' '}
     global acceptedMoves 
     acceptedMoves = list(gameBoard.keys())
+    acceptedMoves.sort()
     global xMoves
     global oMoves
     xMoves = []
     oMoves = []
+    global currentBoard
+    currentBoard = []
 
     totMoveCnt = 0 
     xMoveCnt = 0
     oMoveCnt = 0 
     
+    print('Welcome, Welcome, This is Tic-Tac-Toe, the available moves are: ')
     while totMoveCnt <=9: 
         if totMoveCnt % 2 == 0: 
-            makeMove('x')
+            makeMove('X')
         else:
-            makeMove('o')
+            makeMove('O')
             
         totMoveCnt += 1
 main()
