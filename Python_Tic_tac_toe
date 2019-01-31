@@ -1,16 +1,18 @@
-##tic-tac-toe
+##Tic_tac_toe
+##
+##Quick run by copying and pasting into
+##https://www.onlinegdb.com/online_python_compiler
 import sys
-def getValue(key): #gets value for the key to be displayed, if the value is empty in the dictionary, the key name will be displayed
+
+#Gets value to be displayed on the gameboard to the user, 
+#if the value is empty in the dictionary, the key name will be displayed
+#so the user knows how to choose a space
+def getValue(key): 
     return key if gameBoard.get(key) == ' ' else gameBoard.get(key) 
 
+#Displays the current game board. The current moves made and the names
+#of the spaces avaiable that can be chosen
 def displayCurrentBoard():
-    #print('Accepted moves are ')
-    #print(acceptedMoves)
-    #print(gameBoard.get('top_l','top_l') + ' | ' + gameBoard.get('top_m','top_m') + ' | ' + gameBoard.get('top_r','top_r'))
-    #print('---------')
-    #print(gameBoard.get('mid_l','mid_l') + ' | ' + gameBoard.get('mid_m','mid') + ' | ' + gameBoard.get('mid_r','mid_r'))
-    #print('---------')
-    #print(gameBoard.get('bot_l','bot_l') + ' | ' + gameBoard.get('bot_m','bot_m') + ' | ' + gameBoard.get('bot_r','bot_r'))
     print() 
     print(getValue('top_l') + ' | ' + getValue('top_m') + ' | ' + getValue('top_r'))
     print('----------------')
@@ -18,9 +20,14 @@ def displayCurrentBoard():
     print('----------------')
     print(getValue('bot_l') + ' | ' + getValue('bot_m') + ' | ' + getValue('bot_r'))
     print()
-    
+
+#Checks the input of the user to make sure the move is valid.
+#Will then make the move by adding the position to the appropiate
+#pieces list, so that the piece list can be checked for a winning 
+#set of moves.
 def makeMove(piece):
     displayCurrentBoard()
+    
     #check input
     print('Enter the move for \'' + piece + ('\''))
     userInput = input()
@@ -32,7 +39,6 @@ def makeMove(piece):
     #make move
     userMove = acceptedMoves.pop(acceptedMoves.index(userInput))
     gameBoard[userMove] = piece
-    #print(gameBoard)
 
     if piece == 'X':
         xMoves.append(userMove)
@@ -41,6 +47,9 @@ def makeMove(piece):
         oMoves.append(userMove)
         checkWin(oMoves, piece)
 
+#Checks to see if a piece has won 
+#The currentMoves of a piece are held in a list, this method checks whether
+#That list holds a wining set of moves
 def checkWin(currentMoves, piece): 
     winList = []
     winList.append(['top_l', 'mid_l', 'bot_l']) #leftWin
@@ -55,41 +64,26 @@ def checkWin(currentMoves, piece):
     if (len(currentMoves) > 2):
         for winOption in winList:
             if(all(elem in currentMoves for elem in winOption)):
-                #hasWon = true
                 displayCurrentBoard()
                 print(piece + ' has won. Goodbye')
                 sys.exit(0)
-    
-def main():
-    global gameBoard 
-    gameBoard = {'top_l': ' ', 'top_m': ' ', 'top_r': ' ',
-        'mid_l': ' ', 'mid_m': ' ', 'mid_r': ' ',
-        'bot_l': ' ', 'bot_m':' ', 'bot_r': ' '}
-    global acceptedMoves 
-    acceptedMoves = list(gameBoard.keys())
-    acceptedMoves.sort()
-    global xMoves
-    global oMoves
-    xMoves = []
-    oMoves = []
-    global currentBoard
-    currentBoard = []
 
-    totMoveCnt = 0 
-    xMoveCnt = 0
-    oMoveCnt = 0 
-    
-    print('Welcome, Welcome, This is Tic-Tac-Toe, the available moves are: ')
-    while totMoveCnt <=9: 
-        if totMoveCnt % 2 == 0: 
-            makeMove('X')
-        else:
-            makeMove('O')
-            
-        totMoveCnt += 1
-main()
+#This is the main() of the program. 
+#It displays the welcome screen and runs each turn
+gameBoard = {'top_l': ' ', 'top_m': ' ', 'top_r': ' ',
+    'mid_l': ' ', 'mid_m': ' ', 'mid_r': ' ',
+    'bot_l': ' ', 'bot_m':' ', 'bot_r': ' '}
+acceptedMoves = list(gameBoard.keys())
+acceptedMoves.sort()
+xMoves = []
+oMoves = []
+currentBoard = []
+totMoveCnt = 0 
 
+print('Welcome, Welcome, This is Tic-Tac-Toe')
+print('Please type in the names as you see them on the board')
+print('The available moves are: ')
 
-#check if one list is in another list. 
-
-    
+while totMoveCnt <=9: 
+    makeMove('X') if totMoveCnt % 2 == 0 else makeMove('O')
+    totMoveCnt += 1
