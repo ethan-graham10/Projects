@@ -1,0 +1,65 @@
+#!/bin/bash
+#Script Name: Restore
+
+#This function checks if the file exists in the recycling bin and that an argument is given
+check(){
+  if [ $# -eq 0 ] ; then
+    echo "restore: missing operand"
+    echo "try \`restore--help' for more information."
+    exit 2;
+  elif [[ ! -f ../deleted/$1 && $# -ge 1 ]] ; then
+    echo "restore: cannot restore \`$1': No such file or directory"
+    exit 4;
+  elif [ $1 = "restore" ] ; then
+    echo "Attempting to delete restore - operation aborted"
+    exit 3;
+  fi
+}
+
+#This function gets the original path that is stored in .restore.info
+getPath(){
+  originalPath=$(grep $1 ../.restore.info | cut -d"/" -f2-)
+  originalPath="/$originalPath"
+ }
+
+#This file checks if the user is restoring a file that already exists
+moveBackCheck() {
+  if [[ -f $originalPath ]] ; then
+    read -p "Do you want to overwrite y/n: " userAns
+    if [[ $userAns =~ [Yy] ]] ; then
+      moveBack $1
+    fi
+  else
+    moveBack $1
+  fi
+}
+
+#This function moves the file back from bin
+moveBack() {
+  mbFileName=$(find $HOME -name $1 -type f)
+  mv $mbFileName $originalPath
+}
+
+#This function takes off the entry in the .restore.info file
+takeOffHidden() {
+  restoreLine=$1:$originalPath
+
+  while read line
+  do
+    if [[ ! "$line" = $restoreLine ]] ; then
+      echo "$line" >> ../newRestoreFile
+    fi
+  done < $2
+
+  if [[ -f ../newRestoreFile ]] ; then
+    mv ../newRestoreFile $2
+  else
+    rm $2
+  fi
+}
+
+##################################MAIN#####################################
+check $1
+getPath $1
+moveBackCheck $1
+takeOffHidden $1 ../.restore.info

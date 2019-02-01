@@ -1,0 +1,124 @@
+#!/bin/bash
+#Script Name: Remove
+
+#This function drives the remove for all files
+getArg() {
+  if [[ $# = 0 ]] ; then
+    check
+  fi
+ 
+  numParam=$#
+  interactive=false
+  verbose=false
+  for ((hh=1; hh<=$numParam; hh++))
+  do
+   findFlag $1
+  done
+
+  #This forloop goes through all args and decides if it is a file or a flag, removes files        does appropriate action for flags
+  for ((ii=1; ii<=$numParam; ii++))
+  do
+    flag=$(isFlag $1)
+    if [[ flag -eq 0 ]] ; then
+      shift
+      continue
+    fi
+
+    if [[ $flag -eq 1 ]] && [[ $interactive = true ]] ; then
+      if [[ -s $1 ]] ; then
+        read -p "remove: remove regular empty file \`$1' ? " userAns
+      else
+        read -p "remove: remove regular file \`$1' ?" userAns
+      fi
+
+      if [[ $userAns = Y ]] || [[ $userAns = y ]] ; then
+        eachFile $1
+        if [[ $verbose = true ]] ; then
+          echo "removed \`$1'"
+          continue
+        fi
+      else
+        continue
+      fi
+    else
+      eachFile $1
+    fi
+
+    if [[ $verbose = true ]] ; then
+      echo "removed \`$1'"
+    fi
+
+    shift
+  done
+}
+
+#This function will act as a mini-main. Goes through the remove process for each file
+eachFile() {
+  check $1
+  getFileName $1
+  appendToHidden $1
+  moveToRecycle $1
+}
+
+#This function will check that the file exists, is not a directory, and is not this script
+check() {
+  if [ $# -eq 0 ] ; then #change to double brackets make sure doesnt break
+    echo "rm: missing operand"
+    echo "try \`rm--help' for more information."
+    exit 2;
+  elif [ $1 = "remove" ] ; then
+    echo "Attempting to delete remove - operation aborted"
+    exit 98;
+  elif [ -d $1 ] ; then
+    echo "rm: cannot remove \`$1': Is a directory"
+    exit 3;
+  elif [[ ! -f $1 && $# -ge 1 ]] ; then
+    echo "rm: cannot remove \`$1': No such file or directory"
+    exit 4;
+  fi
+ }
+
+#This method checks if there are flags in the args give
+findFlag() {
+  if [ $1 = "-i" ] ; then
+    interactive=true
+  elif [ $1 = "-v" ] ; then
+    verbose=true
+  elif [ $1 = "-vi" ] ; then
+    interactive=true
+    verbose=true
+  elif [ $1 = "-iv" ] ; then
+    interactive=true
+    verbose=true
+  fi
+}
+
+#This functions checks if the current arg, $1, is a flag
+isFlag() {
+  case $1 in
+    "-i")
+      echo 0 ;;
+    "-v")
+      echo 0 ;;
+    "-vi")
+      echo 0 ;;
+    "-iv")
+      echo 0 ;;
+    *)
+      echo 1 ;;
+  esac
+}
+
+#This function will make the filename, ensuring that only the filename is selected and not     the path
+getFileName() {
+  justFileName=$(basename "$1")
+}
+
+#This function moves the file to the recycling bin and makes the deleted directory if it do    es not exist
+moveToRecycle() {
+  if [ ! -d ../deleted ] ; then
+    mkdir ../deleted
+  fi
+
+   mv $1 ../deleted/$newFileName
+}
